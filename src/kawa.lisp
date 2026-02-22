@@ -133,7 +133,7 @@
     ((consp val)
      (let ((pair (openldk::%make-java-instance "gnu/lists/Pair")))
        (openldk::|<init>(Ljava/lang/Object;Ljava/lang/Object;)| pair
-        (cl->scheme (car val)) (cl->scheme (cdr val)))
+        (cl->scheme (first val)) (cl->scheme (rest val)))
        pair))
     (t val)))
 
@@ -300,12 +300,12 @@
          (case ch
            (#\\ (write-string "\\\\" s))
            (#\" (write-string "\\\"" s))
-           (t   (write-char ch s))))
+           (otherwise (write-char ch s))))
        (write-char #\" s)))
     ((numberp expr)
      (let ((*read-default-float-format* 'double-float))
        (write-to-string expr)))
-    ((and (consp expr) (eq (car expr) 'quote) (consp (cdr expr)) (null (cddr expr)))
+    ((and (consp expr) (eq (first expr) 'quote) (consp (rest expr)) (null (cddr expr)))
      (concatenate 'string "'" (sexp->scheme-string (cadr expr))))
     ((consp expr)
      (with-output-to-string (s)
@@ -313,10 +313,10 @@
        (loop for cell on expr
              for first = t then nil do
          (unless first (write-char #\Space s))
-         (write-string (sexp->scheme-string (car cell)) s)
-         (when (and (cdr cell) (not (consp (cdr cell))))
+         (write-string (sexp->scheme-string (first cell)) s)
+         (when (and (rest cell) (atom (rest cell)))
            (write-string " . " s)
-           (write-string (sexp->scheme-string (cdr cell)) s)))
+           (write-string (sexp->scheme-string (rest cell)) s)))
        (write-char #\) s)))
     ((characterp expr)
      (format nil "#\\~A" expr))
@@ -400,7 +400,8 @@
 
     ;; Define the bridge class
     (cl:eval `(defclass kawa::cl-procedure (,proc-sym)
-                ((kawa::%cl-fn :initarg :cl-function :accessor kawa::%cl-fn))))
+                ((kawa::%cl-fn :initarg :cl-function :accessor kawa::%cl-fn))
+                (:documentation "Bridge class wrapping a CL function as a Kawa Procedure.")))
 
     ;; 0-arg apply
     (cl:eval `(defmethod ,(intern "apply0()" :openldk) ((proc kawa::cl-procedure))

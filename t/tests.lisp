@@ -30,7 +30,7 @@
 (test eval-integer-arithmetic
   (ensure-kawa)
   (is (= 3 (kawa:eval "(+ 1 2)")))
-  (is (= 0 (kawa:eval "(+ 0 0)")))
+  (is (zerop (kawa:eval "(+ 0 0)")))
   (is (= -5 (kawa:eval "(- 3 8)")))
   (is (= 120 (kawa:eval "(* 1 2 3 4 5)"))))
 
@@ -72,7 +72,7 @@
   (ensure-kawa)
   (is (= 3 (kawa:eval '(+ 1 2))))
   (is (= 30 (kawa:eval '(* (+ 2 3) (- 10 4)))))
-  (is (= 0 (kawa:eval '(- 5 5)))))
+  (is (zerop (kawa:eval '(- 5 5)))))
 
 (test sexp-string-operations
   (ensure-kawa)
@@ -321,7 +321,7 @@
 
 (test register-no-args
   (ensure-kawa)
-  (kawa:register "cl-forty-two" (lambda () 42))
+  (kawa:register "cl-forty-two" (constantly 42))
   (is (= 42 (kawa:eval "(cl-forty-two)"))))
 
 (test register-scheme-calls-cl-calls-scheme

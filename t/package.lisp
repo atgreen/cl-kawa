@@ -5,7 +5,8 @@
 ;;; Copyright (C) 2026 Anthony Green <green@moxielogic.com>
 
 (defpackage #:cl-kawa/tests
-  (:use #:cl #:fiveam))
+  (:use #:cl #:fiveam)
+  (:documentation "Tests for cl-kawa."))
 
 (in-package #:cl-kawa/tests)
 
