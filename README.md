@@ -58,6 +58,37 @@ ready implementation.
 (kawa:eval '(cl-square 7))        ; => 49
 ```
 
+## Hello World: three languages in one process
+
+`hello.lisp` demonstrates the full Common Lisp → Scheme → Java
+interop chain in a single SBCL process:
+
+```lisp
+(format t "~A~%"
+  (kawa:eval '(let ((s (|java.lang.String| (string-append "Hello" ", " "World!"))))
+               (|s:toUpperCase|))))
+;; prints: HELLO, WORLD!
+```
+
+This single expression crosses three language boundaries:
+
+1. **Common Lisp** calls `kawa:eval` with a quoted s-expression.
+2. **Kawa Scheme** assembles the greeting with `string-append` and
+   wraps it in a `java.lang.String`.
+3. **Java's** `String.toUpperCase()` runs -- its bytecode was
+   transpiled by OpenLDK into Common Lisp, then compiled by SBCL to
+   native x86-64 assembly.
+
+The result flows back through Scheme's value system into Common Lisp
+and is printed by `format`. No FFI, no sockets, no serialization --
+just nested function calls inside a single Lisp image.
+
+```sh
+LDK_CLASSPATH=libs/kawa-3.1.1.jar \
+  JAVA_HOME=/path/to/java8/jre \
+  sbcl --load hello.lisp
+```
+
 ## Environment variables
 
 * `JAVA_HOME`: path to a Java 8 JRE that contains `lib/rt.jar`.
