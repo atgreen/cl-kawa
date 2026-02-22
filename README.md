@@ -1,20 +1,37 @@
 # cl-kawa
 
-Common Lisp / [Kawa Scheme](https://www.gnu.org/software/kawa/) interop
-via [OpenLDK](https://github.com/atgreen/openldk).
+Common Lisp / [Kawa Scheme](https://www.gnu.org/software/kawa/) interop via
+[OpenLDK](https://github.com/atgreen/openldk).
 
-Kawa Scheme runs on the JVM.  OpenLDK is a JVM implemented in Common
-Lisp.  Since both share the same SBCL process and heap, cl-kawa
-provides deep interoperability between Common Lisp and Scheme -- calling
-Scheme from CL and CL from Scheme with zero serialization or process
-boundaries.
+Kawa Scheme, created by [Per Bothner](https://per.bothner.com/), runs on the
+JVM. OpenLDK is a JVM implemented in Common Lisp. Since both share the same
+SBCL process and heap, cl-kawa enables deep interoperability between Common
+Lisp and Scheme with no serialization or process boundaries.
+
+**Project status:** technology demonstration. Not a performant or production
+ready implementation.
+
+## What you can do
+
+* Evaluate Scheme from Common Lisp (strings or s-expressions).
+* Call Scheme procedures from Common Lisp.
+* Register Common Lisp functions and call them from Scheme.
+* Exchange basic values (numbers, strings, booleans, lists) across the boundary.
 
 ## Prerequisites
 
 * [SBCL](http://www.sbcl.org/)
 * [OpenLDK](https://github.com/atgreen/openldk)
 * Java 8 JDK (`JAVA_HOME` pointing to a JRE with `lib/rt.jar`)
-* [Kawa 3.1.1 JAR](https://www.gnu.org/software/kawa/) (downloaded automatically via Maven, or manually placed in `libs/`)
+* [Kawa 3.1.1 JAR](https://www.gnu.org/software/kawa/) (downloaded automatically
+  via Maven, or manually placed in `libs/`)
+
+## Install
+
+1. Ensure prerequisites are installed and `JAVA_HOME` is set.
+2. Download Kawa (or let Maven fetch it) into `libs/` as
+   `kawa-3.1.1.jar`.
+3. Load the ASDF system from your Common Lisp image.
 
 ## Quick start
 
@@ -38,6 +55,11 @@ boundaries.
 (kawa:register "cl-square" (lambda (x) (* x x)))
 (kawa:eval '(cl-square 7))        ; => 49
 ```
+
+## Environment variables
+
+* `JAVA_HOME`: path to a Java 8 JRE that contains `lib/rt.jar`.
+* `LDK_CLASSPATH`: optional classpath override for OpenLDK.
 
 ## API
 
@@ -108,6 +130,12 @@ LDK_CLASSPATH=libs/kawa-3.1.1.jar \
   JAVA_HOME=/path/to/java8/jre \
   sbcl --load test.lisp
 ```
+
+## Limitations and notes
+
+* Designed as a proof-of-concept; performance and completeness are not goals.
+* The conversion layer only handles basic scalar and list types.
+* Requires Java 8 because OpenLDK depends on `rt.jar`.
 
 ## Author and License
 
