@@ -3,8 +3,10 @@
 Common Lisp / [Kawa Scheme](https://www.gnu.org/software/kawa/) interop via
 [OpenLDK](https://github.com/atgreen/openldk).
 
-Kawa Scheme, created by [Per Bothner](https://per.bothner.com/), runs on the
-JVM. OpenLDK is a JVM implemented in Common Lisp. Since both share the same
+Kawa Scheme, created by [Per Bothner](https://per.bothner.com/), compiles Scheme
+code to Java bytecode and runs on the JVM. OpenLDK is a JVM implemented in
+Common Lisp; it transpiles Java bytecode to Common Lisp code. In SBCL, that
+Common Lisp code is then compiled to native assembly. Since both share the same
 SBCL process and heap, cl-kawa enables deep interoperability between Common
 Lisp and Scheme with no serialization or process boundaries.
 
